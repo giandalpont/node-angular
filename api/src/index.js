@@ -4,10 +4,9 @@ import { dirname, resolve } from 'node:path';
 import { AwardRepositorySql } from "./infrastructure/db/AwardRepositorySql.js";
 import { initSqlite } from "./infrastructure/db/SqliteConnection.js";
 import { CsvLoader } from './infrastructure/csv/CsvLoader.js';
+import { HttpServer } from './interface_adapters/http/HttpServer.js';
 
 (async () => {
-    console.log('Start');
-
     // Banco em memória
     const db = await initSqlite();
     
@@ -19,12 +18,11 @@ import { CsvLoader } from './infrastructure/csv/CsvLoader.js';
     const __dirname = dirname(__filename);
     const csvPath = resolve(__dirname, './data/movies.csv');
 
-    
     // Carregar CSV
     await new CsvLoader(awardRepo).load(csvPath);
+    // console.log(await awardRepo.findAllWinners());
 
-    console.log(await awardRepo.findAllWinners());
-    
-    // 3. HTTP
-    console.log('FIM');
+    // HTTP
+    const server = new HttpServer();
+    server.start(3333);
 })();
