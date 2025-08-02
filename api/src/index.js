@@ -5,6 +5,7 @@ import { AwardRepositorySql } from "./infrastructure/db/AwardRepositorySql.js";
 import { initSqlite } from "./infrastructure/db/SqliteConnection.js";
 import { CsvLoader } from './infrastructure/csv/CsvLoader.js';
 import { HttpServer } from './interface_adapters/http/HttpServer.js';
+import { GetIntervals } from './usecases/GetIntervals.js';
 
 (async () => {
     // Banco em memória
@@ -20,9 +21,11 @@ import { HttpServer } from './interface_adapters/http/HttpServer.js';
 
     // Carregar CSV
     await new CsvLoader(awardRepo).load(csvPath);
-    // console.log(await awardRepo.findAllWinners());
+
+    // Caso de uso
+    const getIntervals = new GetIntervals(awardRepo);
 
     // HTTP
-    const server = new HttpServer();
+    const server = new HttpServer(getIntervals);
     server.start(3333);
 })();

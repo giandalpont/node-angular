@@ -1,6 +1,12 @@
 import { parse } from 'node:url';
 
 export class Router {
+  /**
+   * @param {import('../../usecases/GetIntervals.js').GetIntervals} getIntervalsUseCase
+   */
+  constructor(getIntervalsUseCase) {
+    this.getIntervals = getIntervalsUseCase;
+  }
 
   /**
    * Processa a requisição e retorna [statusCode, headers, body]
@@ -12,7 +18,8 @@ export class Router {
 
     if (req.method === 'GET' && pathname === '/intervals') {
       try {
-        const body = JSON.stringify({status: 'OK'});
+        const result = await this.getIntervals.execute();
+        const body = JSON.stringify(result);
         return [200, { 'Content-Type': 'application/json' }, body];
       } catch (err) {
         // Erro inesperado

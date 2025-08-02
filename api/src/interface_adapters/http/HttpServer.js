@@ -2,8 +2,11 @@ import { createServer } from 'node:http';
 import { Router } from './Router.js';
 
 export class HttpServer {
-    constructor() {
-        this.router = new Router();
+    /**
+     * @param {import('../../usecases/GetIntervals.js').GetIntervals} getIntervalsUseCase
+     */
+    constructor(getIntervalsUseCase) {
+        this.router = new Router(getIntervalsUseCase);
         this.server = createServer(this.handleRequest.bind(this));
     }
 
