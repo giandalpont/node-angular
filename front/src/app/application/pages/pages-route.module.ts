@@ -3,11 +3,14 @@ import { RouterModule, Routes } from "@angular/router";
 
 export const routes: Routes = [
     {
-        path: 'home',
-        loadComponent: (): any => import('./home/home.component').then((m) => m.HomeComponent)
+        path: 'dashboard',
+        loadComponent: () => import('./dashboard/dashboard.component').then(c => c.DashboardComponent)
     },
-    { path: '', pathMatch: 'full', redirectTo: 'home' }
-    // { path: '**', pathMatch: 'full' , redirectTo: 'home'}
+    {
+        path: 'movies',
+        loadComponent: () => import('./movies-list/movies-list.component').then(c => c.MoviesListComponent)
+    },
+    { path: '**', pathMatch: 'full' , redirectTo: 'dashboard' }
 ];
 
 @NgModule({

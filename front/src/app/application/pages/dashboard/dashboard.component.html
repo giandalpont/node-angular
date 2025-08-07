@@ -1,0 +1,124 @@
+<h1 class="text-3xl font-bold mb-6">Dashboard</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">Years with multiple winners</h2>
+        <table mat-table [dataSource]="(years$ | async) || []" class="w-full">
+            <ng-container matColumnDef="year">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Year </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.year}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="winnerCount">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Win Count </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.winnerCount}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsYears" class="border-b border-gray-200"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsYears;" class="hover:bg-gray-50"></tr>
+        </table>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">Top 3 studios with winners</h2>
+        <table mat-table [dataSource]="(studiosWithWinCount$ | async)?.slice(0,3) || []" class="w-full">
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Name </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="winCount">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Win Count </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.winCount}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsStudios" class="border-b border-gray-200"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsStudios;" class="hover:bg-gray-50"></tr>
+        </table>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 col-span-full">
+        <h2 class="text-xl font-semibold mb-4">Producers with longest and shortest interval between wins</h2>
+        <h3 class="text-lg font-medium mt-4 mb-2">Maximum</h3>
+        <table mat-table [dataSource]="(producersIntervals$ | async)?.max || []" class="w-full">
+            <ng-container matColumnDef="producer">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Producer </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.producer}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="interval">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Interval </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.interval}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="previousWin">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Previous Year </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.previousWin}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="followingWin">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Following Year </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.followingWin}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsProducers" class="border-b border-gray-200"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsProducers;" class="hover:bg-gray-50"></tr>
+        </table>
+
+        <h3 class="text-lg font-medium mt-4 mb-2">Minimum</h3>
+        <table mat-table [dataSource]="(producersIntervals$ | async)?.min || []" class="w-full">
+            <ng-container matColumnDef="producer">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Producer </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.producer}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="interval">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Interval </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.interval}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="previousWin">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Previous Year </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.previousWin}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="followingWin">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Following Year </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.followingWin}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsProducers" class="border-b border-gray-200"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsProducers;" class="hover:bg-gray-50"></tr>
+        </table>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 col-span-full">
+        <div class="flex items-center space-x-4 mb-4">
+            <mat-form-field appearance="fill" class="flex-grow">
+                <mat-label>Year</mat-label>
+                <input matInput type="number" [formControl]="yearControl" class="w-full">
+            </mat-form-field>
+            <button mat-raised-button color="primary" (click)="searchWinnersByYear()">Search</button>
+        </div>
+
+        <table mat-table [dataSource]="(winnersByYear$ | async) || []" class="w-full">
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> ID </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.id}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="year">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Year </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.year}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="title">
+                <th mat-header-cell *matHeaderCellDef class="text-left py-2"> Title </th>
+                <td mat-cell *matCellDef="let element" class="py-2"> {{element.title}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsWinners" class="border-b border-gray-200"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsWinners;" class="hover:bg-gray-50"></tr>
+        </table>
+    </div>
+</div>
