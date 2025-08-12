@@ -59,7 +59,7 @@ Retorna um JSON com os produtores de menores e maiores intervalos.
 **Exemplo de request**:
 
 ```http
-GET http://localhost:3333/intervals
+GET http://localhost:3333/api/v1/intervals
 ```
 
 **Exemplo de response**:
