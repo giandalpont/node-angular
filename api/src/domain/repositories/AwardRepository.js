@@ -16,4 +16,12 @@ export class AwardRepository {
   async findAllWinners() {
     throw new Error('Method findAllWinners() must be implemented');
   }
+
+  /**
+   * @param {import('../entities/Award.js').Award[]} awards
+   * @returns {Promise<void>}
+   */
+  async saveMany(awards) {
+    throw new Error('Not implemented');
+  }
 }

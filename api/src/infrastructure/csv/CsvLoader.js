@@ -1,10 +1,11 @@
 import fs from 'node:fs';
-import readline from 'node:readline';
+import csv from 'csv-parser';
 import { Award } from '../../domain/entities/Award.js';
 
 export class CsvLoader {
-  constructor(awardRepository) {
+  constructor(awardRepository, batchSize = 5000) {
     this.awardRepository = awardRepository;
+    this.batchSize = batchSize;
   }
 
   async load(filePath) {
@@ -13,24 +14,45 @@ export class CsvLoader {
       throw new Error(`[CsvLoader] Arquivo não encontrado em: ${filePath}`);
     }
 
-    const fileStream = fs.createReadStream(filePath);
-    const rl = readline.createInterface({ input: fileStream, crlfDelay: Infinity });
+    return new Promise((resolve, reject) => {
+      const awardsBatch = [];
+      const stream = fs.createReadStream(filePath)
+        .pipe(csv({ separator: ';' }))
+        .on('data', async (row) => {
+          if (!row || !row.year || !row.title || !row.producers || typeof row.winner === 'undefined') {
+            // Pula linha malformada
+            return;
+          }
 
-    let isHeader = true;
-    for await (const line of rl) {
-      if (isHeader) { isHeader = false; continue; }
+          const year = Number(row.year);
+          const title = row.title;
+          const producers = row.producers;
+          const isWinner = row.winner.trim().toLowerCase() === 'yes';
 
-      const [yearStr, title, , producers, winnerFlag] = line.split(';');
-      const year = Number(yearStr);
-      const isWinner = winnerFlag.trim().toLowerCase() === 'yes';
+          for (const producerRaw of producers.split(',')) {
+            const producer = producerRaw.trim();
+            if (producer) {
+              awardsBatch.push(new Award({ year, title, producer, isWinner }));
+            }
+          }
 
-      for (const producerRaw of producers.split(',')) {
-        const producer = producerRaw.trim();
-        const award = new Award({ year, title, producer, isWinner });
-        await this.awardRepository.save(award);
-      }
-    }
-
-    console.info(`[CsvLoader] Dados carregados de ${filePath}`);
+          if (awardsBatch.length >= this.batchSize) {
+            stream.pause();
+            await this.awardRepository.saveMany(awardsBatch.splice(0, this.batchSize));
+            stream.resume();
+          }
+        })
+        .on('end', async () => {
+          if (awardsBatch.length > 0) {
+            await this.awardRepository.saveMany(awardsBatch);
+          }
+          console.info(`[CsvLoader] Dados carregados de ${filePath}`);
+          resolve();
+        })
+        .on('error', (error) => {
+          console.error('[CsvLoader] Erro ao processar o arquivo:', error);
+          reject(error);
+        });
+    });
   }
 }
