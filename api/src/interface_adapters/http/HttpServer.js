@@ -3,10 +3,10 @@ import { Router } from './Router.js';
 
 export class HttpServer {
     /**
-     * @param {import('../../usecases/GetIntervals.js').GetIntervals} getIntervalsUseCase
+     * @param {Object} useCases
      */
-    constructor(getIntervalsUseCase) {
-        this.router = new Router(getIntervalsUseCase);
+    constructor(useCases) {
+        this.router = new Router(useCases);
         this.server = createServer(this.handleRequest.bind(this));
     }
 

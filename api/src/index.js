@@ -26,6 +26,6 @@ import { GetIntervals } from './usecases/GetIntervals.js';
     const getIntervals = new GetIntervals(awardRepo);
 
     // HTTP
-    const server = new HttpServer(getIntervals);
+    const server = new HttpServer({ getIntervalsUseCase: getIntervals });
     server.start(3333);
 })();
