@@ -29,7 +29,9 @@ export class CsvLoader {
           const producers = row.producers;
           const isWinner = row.winner.trim().toLowerCase() === 'yes';
 
-          for (const producerRaw of producers.split(',')) {
+          const producerNames = producers.replace(/ and /g, ',').split(',');
+
+          for (const producerRaw of producerNames) {
             const producer = producerRaw.trim();
             if (producer) {
               awardsBatch.push(new Award({ year, title, producer, isWinner }));
