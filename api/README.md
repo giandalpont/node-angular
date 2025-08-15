@@ -46,13 +46,13 @@ npm install
 npm start
 ```
 
-O servidor iniciará em `http://localhost:3333`.
+O servidor iniciará em [`http://localhost:3333`](http://localhost:3333)
 
 ---
 
 ## Uso da API
 
-### GET /intervals
+### GET [/api/v1/intervals](http://localhost:3333/api/v1/intervals)
 
 Retorna um JSON com os produtores de menores e maiores intervalos.
 
@@ -103,7 +103,7 @@ year;title;studios;producers;winner
 ### Unitários
 
 ```bash
-npm run coverage
+npm run test
 ```
 
 ---
